@@ -1,6 +1,6 @@
 1.0.5 2018-04-17
 
-1. "selectie validatie" is verwijder uit het menu, omdat Geonovum de validatie heeft aangepast.
+1. "selectie validatie" is verwijderd uit het menu, omdat Geonovum de validatie heeft aangepast.
 
 2. "filter zoek string" is aangepast, de zoekstring staat niet meer in het configuratie bestand, 
     maar moet worden opgegeven in een popup menu.
