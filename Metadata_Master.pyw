@@ -29,8 +29,8 @@
 __doc__      = "Programma om iso xml's te beheren"
 __rights__   = 'provincie Noord-Brabant'
 __author__   = 'Jan van Sambeek'
-__date__     = ['03-2016', '01-2017', '02-2017']
-__version__  = '1.0.4'
+__date__     = ['03-2016', '01-2017', '02-2017', '04-2018']
+__version__  = '1.0.5'
 
 # ----- IMPORT LIBRARIES -----------------------------------------------
 
@@ -46,30 +46,30 @@ class FilterDialog(wx.Dialog):
   """
   def __init__(self, parent, id, title, titel, resume):
     wx.Dialog.__init__(self, parent, id, title, size=(270, 300))
+    # lees de window grote uit
+    scherm_breedte, scherm_hoogte = self.GetSize()    
     # bij microsoft gebruik een andere onder afstand voor de buttons
     if sys.platform == 'win32': button_dist = 60
     else: button_dist = 50
     # plaats tekst in het dialoog venster
     wx.StaticText(self, -1, 'filter voor de Bestandsnaam: ', pos=(15, 20))
     # maak een tekst control venster    
-    self.bestandsnaam = wx.TextCtrl(self, 113, pos=(10,40), size=(245, -1))
+    self.bestandsnaam = wx.TextCtrl(self, 113, pos=(10,40), size=(scherm_breedte-25, -1))
     # plaats tekst in het dialoog venster
     wx.StaticText(self, -1, 'of ', pos=(15, 70))
     # plaats tekst in het dialoog venster
     wx.StaticText(self, -1, 'filter voor de Titel: ', pos=(15, 100))
     # maak een tekst control venster    
-    self.titel = wx.TextCtrl(self, 113, pos=(10,120), size=(245, -1), value=titel)
+    self.titel = wx.TextCtrl(self, 113, pos=(10,120), size=(scherm_breedte-25, -1), value=titel)
     # plaats tekst in het dialoog venster
     wx.StaticText(self, -1, 'of ', pos=(15, 150))
     # plaats tekst in het dialoog venster
     wx.StaticText(self, -1, 'filter voor de Samenvatting: ', pos=(15, 180))
-    # lees de window grote uit
-    scherm_breedte, scherm_hoogte = self.GetSize()
     # maak een tekst control venster    
-    self.resume = wx.TextCtrl(self, 113, pos=(10,200), size=(245, -1))
+    self.resume = wx.TextCtrl(self, 113, pos=(10,200), size=(scherm_breedte-25, -1))
     # zet 2 buttons met de focus op oke
     self.btn_cc = wx.Button(self, 120, 'Cancel', pos=(25, scherm_hoogte-button_dist))
-    self.btn_ok = wx.Button(self, 121, 'Ok', pos=(160, scherm_hoogte-button_dist))
+    self.btn_ok = wx.Button(self, 121, 'Ok', pos=(scherm_breedte-115, scherm_hoogte-button_dist))
     self.btn_ok.SetFocus()
     self.btn_ok.SetDefault()
     # laat het venster zien    
@@ -96,6 +96,51 @@ class FilterDialog(wx.Dialog):
     self.bestandsnaam = unicode(self.bestandsnaam.GetValue())
     self.titel = unicode(self.titel.GetValue())
     self.resume = unicode(self.resume.GetValue())
+    self.Close()
+    return 
+
+# ----- ZOEKSTRING DIALOG ----------------------------------------------
+
+class ZoekStringDialog(wx.Dialog):
+  """
+  Hierin wordt van een zoekstring een filter gemaakt.
+  """
+  def __init__(self, parent, id, title):
+    wx.Dialog.__init__(self, parent, id, title, size=(400, 150))
+    # lees de window grote uit
+    scherm_breedte, scherm_hoogte = self.GetSize()
+    # bij microsoft gebruik een andere onder afstand voor de buttons
+    if sys.platform == 'win32': button_dist = 60
+    else: button_dist = 50
+    # plaats tekst in het dialoog venster
+    wx.StaticText(self, -1, 'Geef de zoekstring voor het filter: ', pos=(15, 20))
+    # maak een tekst control venster    
+    self.zoekstring = wx.TextCtrl(self, 113, pos=(10,40), size=(scherm_breedte-25, -1))
+    # zet 2 buttons met de focus op oke
+    self.btn_cc = wx.Button(self, 120, 'Cancel', pos=(25, scherm_hoogte-button_dist))
+    self.btn_ok = wx.Button(self, 121, 'Ok', pos=(scherm_breedte-115, scherm_hoogte-button_dist))
+    self.btn_ok.SetFocus()
+    self.btn_ok.SetDefault()
+    # laat het venster zien    
+    self.Center()
+    self.Show(True)
+    # vang de events af
+    wx.EVT_BUTTON(self, 120, self.OnCancel)
+    wx.EVT_BUTTON(self, 121, self.OnOK)
+
+# -----
+
+  def OnCancel(self, event):
+    """   """
+    self.zoekstring = ''
+    self.Close()
+    return
+
+# -----
+        
+  def OnOK(self, event):
+    """   """
+    self.zoekstring = unicode(self.zoekstring.GetValue())
     self.Close()
     return 
 
@@ -237,7 +282,8 @@ class ListCtrlDialog(wx.Dialog):
     # als er niet geselecteerd is
     if self.listctrl.GetFirstSelected() == -1: self.response = False
     # geef anders het item terug
-    else: self.response = self.lijst[self.listctrl.GetFirstSelected()]
+    else: 
+      self.response = self.lijst[self.listctrl.GetFirstSelected()]
     self.Close()
     return
 
@@ -342,8 +388,8 @@ class MainWindow(wx.Frame):
     bestandmenu.Append(105, 'Sluiten', 'Beeindig het programma')
     # maak het selectie menu
     selectiemenu = wx.Menu()
-    self.SelectieItem_validatie = selectiemenu.Append(201, 'Validatie selectie', 'Valideer de geselecteerde gegevens')
-    self.SelectieItem_validatie.Enable(True)
+    #~ self.SelectieItem_validatie = selectiemenu.Append(201, 'Validatie selectie', 'Valideer de geselecteerde gegevens')
+    #~ self.SelectieItem_validatie.Enable(True)
     self.SelectieItem_export = selectiemenu.Append(202, 'Export selectie', 'Export de geselecteerde gegevens')
     self.SelectieItem_export.Enable(True)
     self.SelectieItem_verwijder = selectiemenu.Append(203, 'Verwijder selectie', 'Verwijder de geselecteerde gegevens')
@@ -352,18 +398,17 @@ class MainWindow(wx.Frame):
     filtermenu = wx.Menu()
     self.FilterItem_filter = filtermenu.Append(301, 'Filter BTS', 'Filter voor de Bestandsnaam, de Titel of de Samenvatting')
     self.FilterItem_filter.Enable(True)
-    if self.cfg.get('zoek_string'): 
-      self.FilterItem_ConfigTekst = filtermenu.Append(302, 'Filter zoek string', 'Filter voor de zoek string in het config bestand')
-      self.FilterItem_ConfigTekst.Enable(True)
-    self.FilterItem_kwaliteit = filtermenu.Append(303, 'Filter PGR kwaliteit', 'Beperk de resultaten met PGR kwaliteits criteria')
+    self.FilterItem_ConfigTekst = filtermenu.Append(302, 'Filter zoek string', 'Filter door middel van een zoek string')
+    self.FilterItem_ConfigTekst.Enable(True)
+    self.FilterItem_kwaliteit = filtermenu.Append(303, 'Filter kwaliteit', 'Beperk de resultaten met kwaliteits criteria')
     self.FilterItem_kwaliteit.Enable(True)    
     self.FilterItem_uniek = filtermenu.Append(304, 'Filter unieke waardes', 'Beperk de resultaten met unieke waardes')
     self.FilterItem_uniek.Enable(True)
-    self.FilterItem_trefwoord = filtermenu.Append(305, 'Filter trefwoorden', 'Filter op trefwoorden die niet voorkomen in de thesaurs')
-    self.FilterItem_trefwoord.Enable(True)     
     self.FilterItem_selected = filtermenu.Append(306, 'Filter selectie', 'Beperk de resultaten tot de geselecteerde metadata')
-    self.FilterItem_selected.Enable(True)  
-    self.FilterItem_no_selected = filtermenu.Append(307, 'Verwijder filters', 'Verwijder de selectie')
+    self.FilterItem_selected.Enable(True) 
+    self.FilterItem_reverse = filtermenu.Append(307, 'Filter omkeren', 'Draai de gefilterde metadata om')
+    self.FilterItem_reverse.Enable(True)     
+    self.FilterItem_no_selected = filtermenu.Append(308, 'Verwijder filters', 'Verwijder alle filters')
     self.FilterItem_no_selected.Enable(True)    
     # maak het repareer menu
     repareermenu = wx.Menu()
@@ -377,7 +422,7 @@ class MainWindow(wx.Frame):
     self.RepareerItem_tijdperiode.Enable(False)
     self.RepareerItem_thesauri = repareermenu.Append(412, 'Repareer thesauri', 'Repareer thesauri')
     self.RepareerItem_thesauri.Enable(False)
-    self.RepareerItem_legeregel = repareermenu.Append(413, 'Repareer layout XML', 'Verwijder lege en dergelijke regels uit de xml')
+    self.RepareerItem_legeregel = repareermenu.Append(413, 'Repareer layout XML', 'Verbeter de opmaak en verwijder lege regels uit de xml')
     self.RepareerItem_legeregel.Enable(False)   
     # maak het plugin menu
     plugin = False
@@ -452,9 +497,9 @@ class MainWindow(wx.Frame):
     wx.EVT_MENU(self, 302, self.menuFilterConfigTekst)
     wx.EVT_MENU(self, 303, self.menuFilterKwaliteit)
     wx.EVT_MENU(self, 304, self.menuFilterUniek) 
-    wx.EVT_MENU(self, 305, self.menuFilterTrefWoord) 
-    wx.EVT_MENU(self, 306, self.menuFilterSelectie) 
-    wx.EVT_MENU(self, 307, self.menuFilterOff)
+    wx.EVT_MENU(self, 306, self.menuFilterSelectie)
+    wx.EVT_MENU(self, 307, self.menuFilterReverse)
+    wx.EVT_MENU(self, 308, self.menuFilterOff)
     wx.EVT_MENU(self, 401, self.menuRepareerUniek)
     wx.EVT_MENU(self, 402, self.menuRepareerContact)
     wx.EVT_MENU(self, 410, self.menuRepareerPublicDomain)
@@ -702,9 +747,18 @@ class MainWindow(wx.Frame):
 # -----
 
   def menuFilterConfigTekst(self, event):
-    """ plaats een filter met de zoek string in het config bestand"""
-    # lees de zoek string uit het config bestand
-    zoek_string= self.cfg.get('zoek_string')
+    """ maak een filter van de gegeven zoek string """
+    # bewaar de huidige bestanden
+    XML_bestanden = self.XML_bestanden
+    # maak een object voor het filteren
+    zoekstring_obj = ZoekStringDialog(None, -1, title='FILTER ZOEKSTRING')
+    zoekstring_obj.ShowModal()
+    # lees de verschillende waardes uit het object
+    # geef een lege string als het venster wordt weggeklikt
+    if type(zoekstring_obj.zoekstring) is unicode: zoek_string = zoekstring_obj.zoekstring
+    else: zoek_string = ''    
+    # verwijder het object
+    zoekstring_obj.Destroy()
     # maak een lege list
     XML_rows = []    
     # loop door de uit te lezen directorie
@@ -714,20 +768,20 @@ class MainWindow(wx.Frame):
         # open het bestand en plaats het in de xml variablele
         with open(self.XML_dir+os.sep+metadata_xml, 'r') as bestand: xml = bestand.read().decode('utf-8')
         # als de zoek string in de xml voorkomt voeg hem dan toe aan XML_rows
-        if zoek_string in xml: XML_rows.append(os.path.splitext(metadata_xml)[0])
+        if zoek_string != '' and zoek_string in xml: XML_rows.append(os.path.splitext(metadata_xml)[0])
     # stel de nieuwe XML bestanden vast
     self.XML_bestanden = sorted([[result, self.XML_data[result]['bron titel'][0]] for result in XML_rows])
-    # vul de data met de XML bestanden
-    self.vul_data()
-    return
-    #~ print(XML_rows)
+    # bepaal het aantal xml bestanden
+    if len(self.XML_bestanden) != 0: self.vul_data()
+    # bewaar anders de bestaande bestanden
+    else: self.XML_bestanden = XML_bestanden
 
 # ----
  
   def menuFilterKwaliteit(self, event):
     """ Filter voor onvoldoende kwaliteits eisen """
     # geef de titel balk
-    title = 'PGR KWALITEIT ONVOLDOENDE'
+    title = 'MEATADATA KWALITEIT ONVOLDOENDE'
     # geef de header van de ctrl list
     header = (('Aantal', 70), ('Kwaliteits eisen', 550))
     # maak een teller voor de kwaliteit
@@ -891,49 +945,36 @@ class MainWindow(wx.Frame):
         self.vul_data()
     return
     
-# -----
-
-  def menuFilterTrefWoord(self, event):
-    """  """
-    # geef de titel balk
-    title = 'THESAURI'
-    # geef de header van de ctrl list
-    header = (('datum', 100), ('thesauri', 300),)
-    # stel de lijst samen voor de ctrl list
-    lijst = [tag.split(' ', 1) for tag in self.cfg.get('trefwoorden').keys()]
-    lijst = sorted(lijst)
-    # maak een list control object
-    combo_obj = ListCtrlDialog(None, -1, title=title,  header=header, lijst=lijst)
-    # zet het object op het scherm
-    combo_obj.ShowModal()
-    # lees de verschillende waardes uit het object
-    response_01 = combo_obj.response
-    # verwijder het object
-    combo_obj.Destroy()
-    # verwerkt de geselecteerde resultaten 
-    if response_01 is not False: 
-      print(response_01)
-    
-    # !!! nog verder uitwerken
-    # open een message dialog
-    MsgBox = wx.MessageDialog(None, 'Trefwoorden moet nog verder uitgewerkt worden.', 'THESAURI', wx.OK|wx.ICON_INFORMATION)
-    # als in de message dialog op ok wordt gedrukt, doe dan niets
-    if MsgBox.ShowModal() == wx.ID_OK: pass
-    return
-
 # -----    
     
   def menuFilterSelectie(self, event):
     """ Filter de geselecteerde bestanden """
+    # bewaar de huidige bestanden
+    XML_bestanden = self.XML_bestanden
     # verzamel de metadata xmls
     self.XML_bestanden = sorted([[self.sheet.GetCellValue(row, 0), self.sheet.GetCellValue(row, 1)] for row in self.GetSelectedRows()])
     # bepaal het aantal xml bestanden
     if len(self.XML_bestanden) != 0: self.vul_data()
+    # bewaar anders de bestaande bestanden
+    else: self.XML_bestanden = XML_bestanden
+
+# -----
+    
+  def menuFilterReverse(self, event):
+    """ Draai het filter om """
+    # bewaar de huidige bestanden
+    XML_bestanden = self.XML_bestanden
+    # draai het filter om
+    self.XML_bestanden = sorted([[result, self.XML_data[result]['bron titel'][0]] for result in self.XML_data.keys() if result not in [item[0] for item in self.XML_bestanden]])
+    # bepaal het aantal xml bestanden
+    if len(self.XML_bestanden) != 0: self.vul_data()
+    # bewaar anders de bestaande bestanden
+    else: self.XML_bestanden = XML_bestanden
 
 # -----
 
   def menuFilterOff(self, event):
-    """ Verwijder de filter """ 
+    """ Verwijder het filter """ 
     # sorteer de data
     self.XML_bestanden = sorted([[result, self.XML_data[result]['bron titel'][0]] for result in self.XML_data.keys()])
     # vul het grid met data
@@ -1085,7 +1126,7 @@ class MainWindow(wx.Frame):
       # zoek naar de eerste tag en loop en maak er een xml object van
       for xml_element in xmlObject.getElementsByTagName(first_tag):
         # lees mail gegevens uit
-        mail_geg = zoek_tag(xml_element, mail_tags)
+        mail_geg = str(zoek_tag(xml_element, mail_tags))
         # als de mail gegevens voorkomen in de csv, vervang dan de data
         if mail_geg.lower() in csv_dict.keys():
           # loop door de contact keys
@@ -1361,7 +1402,7 @@ class MainWindow(wx.Frame):
     """ Gegevens over de ontwikkeling van de applicatie """
     # maak de beschrijving
     description = '%s is een programma voor het beheren van GEO metadata, ' %os.path.splitext(self.bestand)[0]
-    description += 'die voldoet aan de door geonovum vastgestelde normen' 
+    description += 'die voldoen aan de door geonovum vastgestelde normen' 
     description += ' '*20
     # maak een wx.AboutDialogInfo object
     info = wx.AboutDialogInfo()
@@ -1370,7 +1411,6 @@ class MainWindow(wx.Frame):
     info.SetVersion('%s' %( __version__))
     info.SetDescription(description)
     info.SetCopyright('(C) 2016 %s' %(__author__))
-    info.SetWebSite('http://www.provinciaalgeoregister.nl/georegister/pgr.do')
     info.SetLicence('\n%s wordt verspreid onder GNU GPL3 licentie. \n\nhttps://www.gnu.org/licenses/gpl.html' %os.path.splitext(self.bestand)[0])
     info.AddDeveloper('binaries:  https://osgeo.nl/geonetwork-gebruikersgroep/best-practices\nsource code:  https://github.com/provincies\n\n%s' %(__author__))
     info.AddDocWriter('%s' %('Carel Stortelder'))
@@ -1414,9 +1454,8 @@ class MainWindow(wx.Frame):
     # begin pas als er iets geselecteerd is
     if len(self.GetSelectedRows()) > 0:
       # geef alle items voor het Rechts Click menu
-      self.RCitems={80 : 'Validatie geselecteerde metadata', \
-                    81 : 'Export geselecteerde metadata', \
-                    82 : 'Verwijder geselecteerde metadata'}
+      #~ self.RCitems={80 : 'Validatie geselecteerde metadata', 81 : 'Export geselecteerde metadata', 82 : 'Verwijder geselecteerde metadata'}
+      self.RCitems={81 : 'Export geselecteerde metadata', 82 : 'Verwijder geselecteerde metadata'}
       # maak een RC menu
       RCmenu = wx.Menu()
       # vul het RC menu met de items en maak de events
@@ -1639,6 +1678,9 @@ class MainWindow(wx.Frame):
         for iso_profiel in self.ISO_profielen:
           # als in de xml een iso profiel aanwezig is voeg dan de metadata toe aan de temp bestanden list
           if iso_profiel in xml: temp_bestanden.append(self.XML_dir+os.sep+metadata_xml)
+        # als de xml niet aan de iso profielen voldoet geef dan een foutmelding
+        if self.XML_dir+os.sep+metadata_xml not in temp_bestanden:
+          logging.error('%s voldoet niet aan de iso profielen' %(metadata_xml))
     # maak een lege teller
     teller = 0
     # lees het aantal xml's
