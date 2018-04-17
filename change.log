@@ -1,3 +1,20 @@
+1.0.5 2018-04-17
+
+1. "selectie validatie" is verwijder uit het menu, omdat Geonovum de validatie heeft aangepast.
+
+2. "filter zoek string" is aangepast, de zoekstring staat niet meer in het configuratie bestand, 
+    maar moet worden opgegeven in een popup menu.
+
+3. "filter PGR kwaliteit" is aangepast in "filter kwaliteit"
+
+4. "filter trefwoorden" is uit het menu verwijderd.
+
+5. "filter omkeren" is aan het menu toegevoegd. Dit filter zorgt ervoor dat het huidige filter wordt omgekeerd, 
+    met alle XML bestanden die niet zijn gefilterd.
+
+6. Een aantal kleine bugs zijn aangepast.
+
+
 1.0.4  2017-04-03
 
 1. "Filter tekst" is aangepast met een filter voor de bestandsnaam en gewijzigd 
